@@ -51,30 +51,6 @@
 									</extraargs>
 								</wsdlOption>
 								<wsdlOption>
-									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/accounts?wsdl
-									</wsdl>
-									<extraargs>
-										<extraarg>-p</extraarg>
-										<extraarg>org.bellatrix.services.ws.accounts</extraarg>
-									</extraargs>
-								</wsdlOption>
-								<wsdlOption>
-									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/groups?wsdl
-									</wsdl>
-									<extraargs>
-										<extraarg>-p</extraarg>
-										<extraarg>org.bellatrix.services.ws.groups</extraarg>
-									</extraargs>
-								</wsdlOption>
-								<wsdlOption>
-									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/menu?wsdl
-									</wsdl>
-									<extraargs>
-										<extraarg>-p</extraarg>
-										<extraarg>org.bellatrix.services.ws.menu</extraarg>
-									</extraargs>
-								</wsdlOption>
-								<wsdlOption>
 									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/message?wsdl
 									</wsdl>
 									<extraargs>
@@ -91,35 +67,11 @@
 									</extraargs>
 								</wsdlOption>
 								<wsdlOption>
-									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/interbanks?wsdl
-									</wsdl>
-									<extraargs>
-										<extraarg>-p</extraarg>
-										<extraarg>org.bellatrix.services.ws.interbanks</extraarg>
-									</extraargs>
-								</wsdlOption>
-								<wsdlOption>
 									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/payments?wsdl
 									</wsdl>
 									<extraargs>
 										<extraarg>-p</extraarg>
 										<extraarg>org.bellatrix.services.ws.payments</extraarg>
-									</extraargs>
-								</wsdlOption>
-								<wsdlOption>
-									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/pos?wsdl
-									</wsdl>
-									<extraargs>
-										<extraarg>-p</extraarg>
-										<extraarg>org.bellatrix.services.ws.pos</extraarg>
-									</extraargs>
-								</wsdlOption>
-								<wsdlOption>
-									<wsdl>http://149.129.215.223:8081/bellatrix/host/services/ws/transfertypes?wsdl
-									</wsdl>
-									<extraargs>
-										<extraarg>-p</extraarg>
-										<extraarg>org.bellatrix.services.ws.transfertypes</extraarg>
 									</extraargs>
 								</wsdlOption>
 							</wsdlOptions>
@@ -291,9 +243,6 @@
 			<artifactId>httpcore</artifactId>
 			<version>4.4.13</version>
 		</dependency>
-
-
-
 		<!-- for testing -->
 		<dependency>
 			<groupId>org.mule.tests</groupId>

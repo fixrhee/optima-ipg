@@ -20,15 +20,18 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *       &lt;sequence>
  *         &lt;element name="bankCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bankName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="billingCycle" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="callbackURL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="expiredAt" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="membership" type="{http://services.bellatrix.org/}members" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="originator" type="{http://services.bellatrix.org/}members" minOccurs="0"/>
  *         &lt;element name="paymentCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="persistent" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="referenceNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="status" type="{http://services.bellatrix.org/}responseStatus" minOccurs="0"/>
+ *         &lt;element name="subscribed" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="traceNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="transactionDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="transactionNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -45,15 +48,18 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "vaPaymentResponse", propOrder = {
     "bankCode",
     "bankName",
+    "billingCycle",
     "callbackURL",
     "description",
     "expiredAt",
+    "membership",
     "name",
     "originator",
     "paymentCode",
     "persistent",
     "referenceNumber",
     "status",
+    "subscribed",
     "traceNumber",
     "transactionDate",
     "transactionNumber",
@@ -63,16 +69,19 @@ public class VaPaymentResponse {
 
     protected String bankCode;
     protected String bankName;
+    protected Integer billingCycle;
     protected String callbackURL;
     protected String description;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar expiredAt;
+    protected Members membership;
     protected String name;
     protected Members originator;
     protected String paymentCode;
     protected boolean persistent;
     protected String referenceNumber;
     protected ResponseStatus status;
+    protected boolean subscribed;
     protected String traceNumber;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar transactionDate;
@@ -125,6 +134,30 @@ public class VaPaymentResponse {
      */
     public void setBankName(String value) {
         this.bankName = value;
+    }
+
+    /**
+     * Gets the value of the billingCycle property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getBillingCycle() {
+        return billingCycle;
+    }
+
+    /**
+     * Sets the value of the billingCycle property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setBillingCycle(Integer value) {
+        this.billingCycle = value;
     }
 
     /**
@@ -197,6 +230,30 @@ public class VaPaymentResponse {
      */
     public void setExpiredAt(XMLGregorianCalendar value) {
         this.expiredAt = value;
+    }
+
+    /**
+     * Gets the value of the membership property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Members }
+     *     
+     */
+    public Members getMembership() {
+        return membership;
+    }
+
+    /**
+     * Sets the value of the membership property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Members }
+     *     
+     */
+    public void setMembership(Members value) {
+        this.membership = value;
     }
 
     /**
@@ -333,6 +390,22 @@ public class VaPaymentResponse {
      */
     public void setStatus(ResponseStatus value) {
         this.status = value;
+    }
+
+    /**
+     * Gets the value of the subscribed property.
+     * 
+     */
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    /**
+     * Sets the value of the subscribed property.
+     * 
+     */
+    public void setSubscribed(boolean value) {
+        this.subscribed = value;
     }
 
     /**

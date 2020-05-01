@@ -236,6 +236,7 @@ public class IPGController {
 			model.addAttribute("basket", response.getBasket());
 			model.addAttribute("receiveURL", contextLoader.getReceiveURL());
 			model.addAttribute("ticketID", ticketID);
+			model.addAttribute("paymentPageURL", contextLoader.getPaymentPageURL());
 			return "paymentPage";
 		} catch (NullPointerException ex) {
 			logger.error("[Ticket Not Found/Expired]");
@@ -416,43 +417,25 @@ public class IPGController {
 
 			String sessionMap = t.getMerchantID() + t.getInvoiceID() + t.getSessionID();
 			if (status.equalsIgnoreCase("0000")) {
-				String response = paymentPageProcessor.sendCheckStatus(transID, sessionID);
-				String rc = StringUtils.substringBetween(response, "<RESPONSECODE>", "</RESPONSECODE>");
-				logger.info("[CHECK Status ResponseCode : " + rc + "]");
-				if (rc.equalsIgnoreCase("0000")) {
-					PaymentResponse pr = paymentPageProcessor.doPayment(sessionID, t.getMerchantID(), t.getInvoiceID(),
-							t.getDescription(), t.getAmount());
-					if (pr.getStatus().getMessage().equalsIgnoreCase("PROCESSED")) {
-						t.setStatus(pr.getStatus().getMessage());
-						model.addAttribute("merchantID", t.getMerchantID());
-						model.addAttribute("invoiceID", t.getInvoiceID());
-						model.addAttribute("amount", t.getAmount());
-						model.addAttribute("sessionID", t.getSessionID());
-						model.addAttribute("currency", t.getCurrency());
-						model.addAttribute("paymentChannel", t.getPaymentChannel());
-						model.addAttribute("ticketID", sessionID);
-						model.addAttribute("words", t.getWords());
-						model.addAttribute("status", pr.getStatus().getMessage());
+				PaymentResponse pr = paymentPageProcessor.doPayment(sessionID, t.getMerchantID(), t.getInvoiceID(),
+						t.getDescription(), t.getAmount());
+				if (pr.getStatus().getMessage().equalsIgnoreCase("PROCESSED")) {
+					t.setStatus(pr.getStatus().getMessage());
+					model.addAttribute("merchantID", t.getMerchantID());
+					model.addAttribute("invoiceID", t.getInvoiceID());
+					model.addAttribute("amount", t.getAmount());
+					model.addAttribute("sessionID", t.getSessionID());
+					model.addAttribute("currency", t.getCurrency());
+					model.addAttribute("paymentChannel", t.getPaymentChannel());
+					model.addAttribute("ticketID", sessionID);
+					model.addAttribute("words", t.getWords());
+					model.addAttribute("status", pr.getStatus().getMessage());
 
-					} else {
-						logger.info("[Credit to Merchant Failed, VOIDING Transaction For MID : " + t.getMerchantID()
-								+ " With Invoice : " + transID + "]");
-						String responseVoid = paymentPageProcessor.sendVoid(transID, sessionID);
-						logger.info("[VOID Status ResponseCode : " + responseVoid + "]");
-						t.setStatus("FAILED");
-						model.addAttribute("merchantID", t.getMerchantID());
-						model.addAttribute("invoiceID", t.getInvoiceID());
-						model.addAttribute("amount", t.getAmount());
-						model.addAttribute("sessionID", t.getSessionID());
-						model.addAttribute("currency", t.getCurrency());
-						model.addAttribute("paymentChannel", t.getPaymentChannel());
-						model.addAttribute("ticketID", sessionID);
-						model.addAttribute("words", t.getWords());
-						model.addAttribute("status", "FAILED");
-						model.addAttribute("description",
-								"Something isn't quite right, We were reversing your payment...");
-					}
 				} else {
+					logger.info("[Credit to Merchant Failed, VOIDING Transaction For MID : " + t.getMerchantID()
+							+ " With Invoice : " + transID + "]");
+					String responseVoid = paymentPageProcessor.sendVoid(transID, sessionID);
+					logger.info("[VOID Status ResponseCode : " + responseVoid + "]");
 					t.setStatus("FAILED");
 					model.addAttribute("merchantID", t.getMerchantID());
 					model.addAttribute("invoiceID", t.getInvoiceID());
@@ -463,9 +446,9 @@ public class IPGController {
 					model.addAttribute("ticketID", sessionID);
 					model.addAttribute("words", t.getWords());
 					model.addAttribute("status", "FAILED");
-					model.addAttribute("description",
-							"Your payment was unsuccessful, please contact our call center for further information.");
+					model.addAttribute("description", "Something isn't quite right, We were reversing your payment...");
 				}
+
 			} else {
 				logger.info("[Debit to Customer Failed, VOIDING Transaction For MID : " + t.getMerchantID()
 						+ " With Invoice : " + transID + "]");

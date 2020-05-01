@@ -32,6 +32,12 @@ public class ContextLoader {
 	private String VoidURL;
 	@Value("${doku.member.username}")
 	private String DokuUsername;
+	@Value("${payment.page.url}")
+	private String PaymentPageURL;
+
+	public String getPaymentPageURL() {
+		return PaymentPageURL;
+	}
 
 	public String getHeaderToken() {
 		return headerToken;

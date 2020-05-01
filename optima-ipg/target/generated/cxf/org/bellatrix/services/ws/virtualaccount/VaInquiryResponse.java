@@ -22,12 +22,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="amount" type="{http://www.w3.org/2001/XMLSchema}decimal" minOccurs="0"/>
  *         &lt;element name="bankCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bankName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="billingCyle" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="email" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="expiredAt" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="finalAmount" type="{http://www.w3.org/2001/XMLSchema}decimal" minOccurs="0"/>
  *         &lt;element name="formattedExpiredAt" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="fullPayment" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="membership" type="{http://services.bellatrix.org/}members" minOccurs="0"/>
  *         &lt;element name="minimumPayment" type="{http://www.w3.org/2001/XMLSchema}decimal" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="originator" type="{http://services.bellatrix.org/}members" minOccurs="0"/>
@@ -35,6 +37,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="persistent" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="referenceNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="status" type="{http://services.bellatrix.org/}responseStatus" minOccurs="0"/>
+ *         &lt;element name="subscribed" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="ticketID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="totalFees" type="{http://www.w3.org/2001/XMLSchema}decimal" minOccurs="0"/>
  *       &lt;/sequence>
@@ -50,12 +53,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "amount",
     "bankCode",
     "bankName",
+    "billingCyle",
     "description",
     "email",
     "expiredAt",
     "finalAmount",
     "formattedExpiredAt",
     "fullPayment",
+    "membership",
     "minimumPayment",
     "name",
     "originator",
@@ -63,6 +68,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "persistent",
     "referenceNumber",
     "status",
+    "subscribed",
     "ticketID",
     "totalFees"
 })
@@ -71,6 +77,7 @@ public class VaInquiryResponse {
     protected BigDecimal amount;
     protected String bankCode;
     protected String bankName;
+    protected Integer billingCyle;
     protected String description;
     protected String email;
     @XmlSchemaType(name = "dateTime")
@@ -78,6 +85,7 @@ public class VaInquiryResponse {
     protected BigDecimal finalAmount;
     protected String formattedExpiredAt;
     protected boolean fullPayment;
+    protected Members membership;
     protected BigDecimal minimumPayment;
     protected String name;
     protected Members originator;
@@ -85,6 +93,7 @@ public class VaInquiryResponse {
     protected boolean persistent;
     protected String referenceNumber;
     protected ResponseStatus status;
+    protected boolean subscribed;
     protected String ticketID;
     protected BigDecimal totalFees;
 
@@ -158,6 +167,30 @@ public class VaInquiryResponse {
      */
     public void setBankName(String value) {
         this.bankName = value;
+    }
+
+    /**
+     * Gets the value of the billingCyle property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getBillingCyle() {
+        return billingCyle;
+    }
+
+    /**
+     * Sets the value of the billingCyle property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setBillingCyle(Integer value) {
+        this.billingCyle = value;
     }
 
     /**
@@ -294,6 +327,30 @@ public class VaInquiryResponse {
      */
     public void setFullPayment(boolean value) {
         this.fullPayment = value;
+    }
+
+    /**
+     * Gets the value of the membership property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Members }
+     *     
+     */
+    public Members getMembership() {
+        return membership;
+    }
+
+    /**
+     * Sets the value of the membership property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Members }
+     *     
+     */
+    public void setMembership(Members value) {
+        this.membership = value;
     }
 
     /**
@@ -454,6 +511,22 @@ public class VaInquiryResponse {
      */
     public void setStatus(ResponseStatus value) {
         this.status = value;
+    }
+
+    /**
+     * Gets the value of the subscribed property.
+     * 
+     */
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    /**
+     * Sets the value of the subscribed property.
+     * 
+     */
+    public void setSubscribed(boolean value) {
+        this.subscribed = value;
     }
 
     /**

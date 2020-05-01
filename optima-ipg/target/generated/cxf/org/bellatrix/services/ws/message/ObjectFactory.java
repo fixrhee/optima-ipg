@@ -44,43 +44,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LoadMessageByUsernameRequest }
+     * 
+     */
+    public LoadMessageByUsernameRequest createLoadMessageByUsernameRequest() {
+        return new LoadMessageByUsernameRequest();
+    }
+
+    /**
      * Create an instance of {@link NotificationMessage }
      * 
      */
     public NotificationMessage createNotificationMessage() {
         return new NotificationMessage();
-    }
-
-    /**
-     * Create an instance of {@link ResponseStatus }
-     * 
-     */
-    public ResponseStatus createResponseStatus() {
-        return new ResponseStatus();
-    }
-
-    /**
-     * Create an instance of {@link MessageRequest }
-     * 
-     */
-    public MessageRequest createMessageRequest() {
-        return new MessageRequest();
-    }
-
-    /**
-     * Create an instance of {@link SendMessageRequest }
-     * 
-     */
-    public SendMessageRequest createSendMessageRequest() {
-        return new SendMessageRequest();
-    }
-
-    /**
-     * Create an instance of {@link Exception }
-     * 
-     */
-    public Exception createException() {
-        return new Exception();
     }
 
     /**
@@ -92,19 +68,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LoadMessageByUsernameRequest }
+     * Create an instance of {@link LoadMessageByIDRequest }
      * 
      */
-    public LoadMessageByUsernameRequest createLoadMessageByUsernameRequest() {
-        return new LoadMessageByUsernameRequest();
+    public LoadMessageByIDRequest createLoadMessageByIDRequest() {
+        return new LoadMessageByIDRequest();
     }
 
     /**
-     * Create an instance of {@link Header }
+     * Create an instance of {@link SendMessageRequest }
      * 
      */
-    public Header createHeader() {
-        return new Header();
+    public SendMessageRequest createSendMessageRequest() {
+        return new SendMessageRequest();
+    }
+
+    /**
+     * Create an instance of {@link MessageRequest }
+     * 
+     */
+    public MessageRequest createMessageRequest() {
+        return new MessageRequest();
     }
 
     /**
@@ -116,11 +100,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LoadMessageByIDRequest }
+     * Create an instance of {@link Header }
      * 
      */
-    public LoadMessageByIDRequest createLoadMessageByIDRequest() {
-        return new LoadMessageByIDRequest();
+    public Header createHeader() {
+        return new Header();
+    }
+
+    /**
+     * Create an instance of {@link Exception }
+     * 
+     */
+    public Exception createException() {
+        return new Exception();
+    }
+
+    /**
+     * Create an instance of {@link ResponseStatus }
+     * 
+     */
+    public ResponseStatus createResponseStatus() {
+        return new ResponseStatus();
     }
 
     /**
