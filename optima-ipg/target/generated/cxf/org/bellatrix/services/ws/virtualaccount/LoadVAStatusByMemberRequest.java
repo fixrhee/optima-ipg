@@ -18,8 +18,10 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="billingStatus" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="currentPage" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="eventID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="fromDate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="pageSize" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="subscribed" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="toDate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -34,8 +36,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "loadVAStatusByMemberRequest", propOrder = {
     "billingStatus",
     "currentPage",
+    "eventID",
     "fromDate",
     "pageSize",
+    "subscribed",
     "toDate",
     "username"
 })
@@ -43,8 +47,10 @@ public class LoadVAStatusByMemberRequest {
 
     protected String billingStatus;
     protected Integer currentPage;
+    protected String eventID;
     protected String fromDate;
     protected Integer pageSize;
+    protected boolean subscribed;
     protected String toDate;
     protected String username;
 
@@ -97,6 +103,30 @@ public class LoadVAStatusByMemberRequest {
     }
 
     /**
+     * Gets the value of the eventID property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEventID() {
+        return eventID;
+    }
+
+    /**
+     * Sets the value of the eventID property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEventID(String value) {
+        this.eventID = value;
+    }
+
+    /**
      * Gets the value of the fromDate property.
      * 
      * @return
@@ -142,6 +172,22 @@ public class LoadVAStatusByMemberRequest {
      */
     public void setPageSize(Integer value) {
         this.pageSize = value;
+    }
+
+    /**
+     * Gets the value of the subscribed property.
+     * 
+     */
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    /**
+     * Sets the value of the subscribed property.
+     * 
+     */
+    public void setSubscribed(boolean value) {
+        this.subscribed = value;
     }
 
     /**

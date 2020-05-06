@@ -9,7 +9,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,6 +25,7 @@ import org.bellatrix.services.ws.members.LoadMembersResponse;
 import org.bellatrix.services.ws.payments.PaymentResponse;
 import org.bellatrix.services.ws.virtualaccount.LoadVAByIDResponse;
 import org.bellatrix.services.ws.virtualaccount.VaRegisterResponse;
+import org.mule.api.client.MuleClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -186,6 +189,7 @@ public class IPGController {
 			sMap.put(sID, t);
 
 			model.addAttribute("ticketID", ticket);
+			model.addAttribute("paymentPageURL", contextLoader.getPaymentPageURL());
 			return "paymentRequest";
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -236,7 +240,6 @@ public class IPGController {
 			model.addAttribute("basket", response.getBasket());
 			model.addAttribute("receiveURL", contextLoader.getReceiveURL());
 			model.addAttribute("ticketID", ticketID);
-			model.addAttribute("paymentPageURL", contextLoader.getPaymentPageURL());
 			return "paymentPage";
 		} catch (NullPointerException ex) {
 			logger.error("[Ticket Not Found/Expired]");
@@ -297,11 +300,17 @@ public class IPGController {
 				model.addAttribute("ticketID", vaRegisterResponse.getTicketID());
 				return "redirect:/bankTransferPayment";
 			} else if (vaRegisterResponse.getStatus().getMessage().equalsIgnoreCase("DUPLICATE_TRANSACTION")) {
-				model.addAttribute("status", "Your billing already exist with the same billing ID");
-				return "redirect:/paymentPage";
+				logger.error("[Ticket Not Found/Expired]");
+				model.addAttribute("httpResponseCode", "404");
+				model.addAttribute("status", "Duplicate Billing");
+				model.addAttribute("description", "Your billing already exist with the same billing ID");
+				return "page_exception";
 			} else {
 				model.addAttribute("status", vaRegisterResponse.getStatus().getDescription());
-				return "redirect:/paymentPage";
+				model.addAttribute("httpResponseCode", "404");
+				model.addAttribute("status", vaRegisterResponse.getStatus().getMessage());
+				model.addAttribute("description", vaRegisterResponse.getStatus().getDescription());
+				return "page_exception";
 			}
 		} catch (NullPointerException ex) {
 			logger.error("[Ticket Not Found/Expired]");
@@ -402,9 +411,20 @@ public class IPGController {
 	public String paymentRedirection(@RequestParam(value = "AMOUNT", required = true) String amount,
 			@RequestParam(value = "TRANSIDMERCHANT", required = true) String transID,
 			@RequestParam(value = "SESSIONID", required = true) String sessionID,
+			@RequestParam(value = "WORDS", required = true) String words,
+			@RequestParam(value = "PAYMENTCHANNEL", required = true) String paymentChannel,
 			@RequestParam(value = "STATUSCODE", required = true) String status, ModelMap model) throws IOException {
 		try {
 			logger.info("[REDIRECT Status : " + status + "]");
+			String calculateWords = DigestUtils.sha1Hex(amount + contextLoader.getDokuSharedKey() + transID + status);
+			if (calculateWords.compareTo(words) != 0) {
+				logger.error("[Invalid Redirect Words]");
+				model.addAttribute("httpResponseCode", "403");
+				model.addAttribute("status", "FORBIDDEN ACCESS");
+				model.addAttribute("description", "Security Violation");
+				return "page_exception";
+			}
+
 			IMap<String, Ticket> tMap = instance.getMap("PaymentRequestMap");
 			Ticket t = tMap.get(sessionID);
 			if (t.getMerchantID() == null) {
@@ -426,11 +446,22 @@ public class IPGController {
 					model.addAttribute("amount", t.getAmount());
 					model.addAttribute("sessionID", t.getSessionID());
 					model.addAttribute("currency", t.getCurrency());
+					model.addAttribute("transactionNumber", pr.getTransactionNumber());
+					model.addAttribute("name", t.getName());
+					model.addAttribute("email", t.getEmail());
+					model.addAttribute("msisdn", t.getMsisdn());
+					model.addAttribute("description", t.getDescription());
 					model.addAttribute("paymentChannel", t.getPaymentChannel());
 					model.addAttribute("ticketID", sessionID);
 					model.addAttribute("words", t.getWords());
 					model.addAttribute("status", pr.getStatus().getMessage());
-
+					paymentPageProcessor.sendToSettlement(pr);
+					paymentPageProcessor.sendMessage(pr.getFromMember().getUsername(), pr.getToMember().getUsername(),
+							"Payment Received " + t.getDescription(),
+							"You have received a payment "
+									+ formatAmount(pr.getAmount(), ".", ",", "#,##0.00", "Rp.", ",-")
+									+ " using Credit Card from " + t.getName() + " (" + t.getEmail()
+									+ ") with Invoice ID " + t.getInvoiceID());
 				} else {
 					logger.info("[Credit to Merchant Failed, VOIDING Transaction For MID : " + t.getMerchantID()
 							+ " With Invoice : " + transID + "]");
@@ -448,7 +479,6 @@ public class IPGController {
 					model.addAttribute("status", "FAILED");
 					model.addAttribute("description", "Something isn't quite right, We were reversing your payment...");
 				}
-
 			} else {
 				logger.info("[Debit to Customer Failed, VOIDING Transaction For MID : " + t.getMerchantID()
 						+ " With Invoice : " + transID + "]");
@@ -464,12 +494,14 @@ public class IPGController {
 				model.addAttribute("ticketID", sessionID);
 				model.addAttribute("words", t.getWords());
 				model.addAttribute("status", "FAILED");
-				model.addAttribute("description", "Something isn't quite right, We were reversing your payment...");
+				model.addAttribute("description",
+						"Oops! Your payment was failed, please consult with your bank and try again");
 			}
 			IMap<String, Ticket> sMap = instance.getMap("PaymentSessionMap");
 			sMap.put(sessionMap, t);
 			return "merchantRedirect";
 		} catch (NullPointerException ex) {
+			ex.printStackTrace();
 			logger.error("[Ticket Not Found/Expired]");
 			model.addAttribute("httpResponseCode", "404");
 			model.addAttribute("status", "TicketID Not Found");
@@ -487,6 +519,22 @@ public class IPGController {
 			return "page_exception";
 		}
 	}
+
+	// @RequestMapping(value = "/testRedirect", method = RequestMethod.GET)
+	// public String testRedirect(@RequestParam(value = "test", required = false)
+	// String test, ModelMap model) {
+	// model.addAttribute("ticketID", "11283797981723");
+	// model.addAttribute("merchantID", "1112007");
+	// model.addAttribute("invoiceID", "112983791723898791");
+	// model.addAttribute("amount", "10000");
+	// model.addAttribute("sessionID", "1192789u09uo129");
+	// model.addAttribute("currency", "360");
+	// model.addAttribute("paymentChannel", "15");
+	// model.addAttribute("words", "187912kuhkuh23iyi");
+	// model.addAttribute("status", "PROCESSED");
+	//
+	// return "merchantRedirect";
+	// }
 
 	@RequestMapping(value = "/merchantRedirection", method = RequestMethod.POST)
 	public ResponseEntity<Object> redirectToExternalUrl(
@@ -507,7 +555,6 @@ public class IPGController {
 			URI url = new URI(t.getCallback());
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setLocation(url);
-			tMap.delete(ticketID);
 			return new ResponseEntity<>(httpHeaders, HttpStatus.TEMPORARY_REDIRECT);
 
 		} catch (NullPointerException ex) {

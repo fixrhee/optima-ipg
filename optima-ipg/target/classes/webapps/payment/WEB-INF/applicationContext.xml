@@ -25,4 +25,19 @@ http://www.hazelcast.com/schema/spring classpath:hazelcast.xsd">
 			</hz:map>
 		</hz:config>
 	</hz:hazelcast>
+
+	<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL">
+			<value>failover://tcp://192.168.27.26:61617</value>
+		</property>
+	</bean>
+	<bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="ipg.settlement" />
+	</bean>
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="defaultDestination" ref="destination" />
+	</bean>
+
 </beans>

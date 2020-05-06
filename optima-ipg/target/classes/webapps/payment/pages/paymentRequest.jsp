@@ -49,7 +49,7 @@
 				<span id="TEXT-CONTINUE">Click button below if the page is not change</span>
 			</div>
 		</div>
-		<form action="{paymentPageURL}?ticketID=${ticketID}" method="POST" id="formRedirect" name="formRedirect">
+		<form action="${paymentPageURL}?ticketID=${ticketID}" method="POST" id="formRedirect" name="formRedirect">
 		<input type="submit" id="BTN-CONTINUE" value="Continue">
 		</form>				
 	</div>		    

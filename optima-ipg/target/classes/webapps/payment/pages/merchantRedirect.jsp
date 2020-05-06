@@ -24,6 +24,11 @@
 		<input type="hidden" name="currency" value="${currency}">
 		<input type="hidden" name="paymentChannel" value="${paymentChannel}">
 		<input type="hidden" name="ticketID" value="${ticketID}">
+		<input type="hidden" name="transactionNumber" value="${transactionNumber}">
+		<input type="hidden" name="name" value="${name}">
+		<input type="hidden" name="email" value="${email}">
+		<input type="hidden" name="msisdn" value="${msisdn}">
+		<input type="hidden" name="description" value="${description}">
 		<input type="hidden" name="words" value="${words}">
 		<input type="hidden" name="status" value="${status}">
 		<input type="submit" id="BTN-CONTINUE" value="Continue">

@@ -77,7 +77,7 @@
     						<br />
     						<div class="row">			
 							<div class="col-sm-12">
-							<form id="bankTransferPayment" name="bankTransferform" role="form" class="form-horizontal" action="/payment/bankTransfer" method="post" modelAttribute="transfer">								
+							<form id="bankTransferPayment" name="bankTransferform" role="form" class="form-horizontal" action="/payment/bankTransfer" method="POST" modelAttribute="transfer">								
 					          <input type="hidden" name="name" id="name" value="${name}" class="form-control validate">
 					          <input type="hidden" name="email" id="email" value="${email}" class="form-control validate">
 					          <input type="hidden" name="msisdn" id="msisdn" value="${msisdn}" class="form-control validate">

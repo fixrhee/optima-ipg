@@ -9,8 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -19,6 +20,9 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 
 import org.bellatrix.services.ws.members.MemberService;
+import org.bellatrix.services.ws.message.Message;
+import org.bellatrix.services.ws.message.MessageService;
+import org.bellatrix.services.ws.message.SendMessageRequest;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.bellatrix.services.ws.access.Access;
@@ -49,6 +53,7 @@ import org.bellatrix.services.ws.virtualaccount.VaRegisterResponse;
 import org.bellatrix.services.ws.virtualaccount.VirtualAccount;
 import org.bellatrix.services.ws.virtualaccount.VirtualAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import com.jpa.optima.ipg.model.CreditCardParam;
@@ -66,9 +71,42 @@ public class PaymentPageProcessor {
 
 	@Autowired
 	private ContextLoader contextLoader;
+	@Autowired
+	private JmsTemplate jmsTemplate;
 
-	public PaymentResponse doPayment(String ticketID, String to, String invoiceID, String description, BigDecimal amount)
-			throws Exception {
+	public void sendToSettlement(PaymentResponse response) {
+		Map<String, Object> obj = new HashMap<String, Object>();
+		obj.put("transferID", response.getId());
+		obj.put("transferTypeID", response.getTransferType().getId());
+		obj.put("transactionNumber", response.getTransactionNumber());
+		obj.put("traceNumber", response.getTraceNumber());
+		obj.put("fromUsername", response.getFromMember().getUsername());
+		obj.put("toUsername", response.getToMember().getUsername());
+		obj.put("amount", response.getAmount().toPlainString());
+		jmsTemplate.convertAndSend(obj);
+	}
+
+	public void sendMessage(String fromUsername, String toUsername, String subject, String body) throws Exception {
+		URL url = new URL(contextLoader.getHostWSUrl() + "message?wsdl");
+		QName qName = new QName(contextLoader.getHostWSPort(), "MessageService");
+		MessageService service = new MessageService(url, qName);
+		Message client = service.getMessagePort();
+
+		org.bellatrix.services.ws.message.Header headerPayment = new org.bellatrix.services.ws.message.Header();
+		headerPayment.setToken(contextLoader.getHeaderToken());
+		Holder<org.bellatrix.services.ws.message.Header> headerAuth = new Holder<org.bellatrix.services.ws.message.Header>();
+		headerAuth.value = headerPayment;
+
+		SendMessageRequest messageRequest = new SendMessageRequest();
+		messageRequest.setFromUsername(fromUsername);
+		messageRequest.setToUsername(toUsername);
+		messageRequest.setBody(body);
+		messageRequest.setSubject(subject);
+		client.sendMessage(headerAuth, messageRequest);
+	}
+
+	public PaymentResponse doPayment(String ticketID, String to, String invoiceID, String description,
+			BigDecimal amount) throws Exception {
 		URL url = new URL(contextLoader.getHostWSUrl() + "payments?wsdl");
 		QName qName = new QName(contextLoader.getHostWSPort(), "PaymentService");
 		PaymentService service = new PaymentService(url, qName);
@@ -86,6 +124,7 @@ public class PaymentPageProcessor {
 		paymentRequest.setDescription("Invoice ID : " + invoiceID + " - " + description);
 		paymentRequest.setTransferTypeID(contextLoader.getIPGTransferType());
 		paymentRequest.setAmount(amount);
+		paymentRequest.setStatus("PENDING");
 
 		PaymentResponse paymentResponse = client.doPayment(headerAuth, paymentRequest);
 		return paymentResponse;
@@ -341,5 +380,13 @@ public class PaymentPageProcessor {
 		}
 
 		return result;
+	}
+
+	public JmsTemplate getJmsTemplate() {
+		return jmsTemplate;
+	}
+
+	public void setJmsTemplate(JmsTemplate jmsTemplate) {
+		this.jmsTemplate = jmsTemplate;
 	}
 }

@@ -44,35 +44,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LoadMessageByUsernameRequest }
+     * Create an instance of {@link ResponseStatus }
      * 
      */
-    public LoadMessageByUsernameRequest createLoadMessageByUsernameRequest() {
-        return new LoadMessageByUsernameRequest();
-    }
-
-    /**
-     * Create an instance of {@link NotificationMessage }
-     * 
-     */
-    public NotificationMessage createNotificationMessage() {
-        return new NotificationMessage();
-    }
-
-    /**
-     * Create an instance of {@link LoadMessageResponse }
-     * 
-     */
-    public LoadMessageResponse createLoadMessageResponse() {
-        return new LoadMessageResponse();
-    }
-
-    /**
-     * Create an instance of {@link LoadMessageByIDRequest }
-     * 
-     */
-    public LoadMessageByIDRequest createLoadMessageByIDRequest() {
-        return new LoadMessageByIDRequest();
+    public ResponseStatus createResponseStatus() {
+        return new ResponseStatus();
     }
 
     /**
@@ -92,19 +68,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UnreadMessage }
+     * Create an instance of {@link NotificationMessage }
      * 
      */
-    public UnreadMessage createUnreadMessage() {
-        return new UnreadMessage();
+    public NotificationMessage createNotificationMessage() {
+        return new NotificationMessage();
     }
 
     /**
-     * Create an instance of {@link Header }
+     * Create an instance of {@link LoadMessageResponse }
      * 
      */
-    public Header createHeader() {
-        return new Header();
+    public LoadMessageResponse createLoadMessageResponse() {
+        return new LoadMessageResponse();
+    }
+
+    /**
+     * Create an instance of {@link LoadMessageByUsernameRequest }
+     * 
+     */
+    public LoadMessageByUsernameRequest createLoadMessageByUsernameRequest() {
+        return new LoadMessageByUsernameRequest();
     }
 
     /**
@@ -116,11 +100,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ResponseStatus }
+     * Create an instance of {@link UnreadMessage }
      * 
      */
-    public ResponseStatus createResponseStatus() {
-        return new ResponseStatus();
+    public UnreadMessage createUnreadMessage() {
+        return new UnreadMessage();
+    }
+
+    /**
+     * Create an instance of {@link LoadMessageByIDRequest }
+     * 
+     */
+    public LoadMessageByIDRequest createLoadMessageByIDRequest() {
+        return new LoadMessageByIDRequest();
+    }
+
+    /**
+     * Create an instance of {@link Header }
+     * 
+     */
+    public Header createHeader() {
+        return new Header();
     }
 
     /**

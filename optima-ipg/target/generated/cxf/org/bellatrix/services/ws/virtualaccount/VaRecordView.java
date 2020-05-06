@@ -23,6 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="bankCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bankID" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="bankName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="billingCycle" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="callbackURL" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="createdDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -33,6 +34,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="formattedTransactionDate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="fullPayment" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="membershipID" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="minimumPayment" type="{http://www.w3.org/2001/XMLSchema}decimal" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentUsername" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -40,6 +42,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="persistent" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="referenceNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="status" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="subscribed" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="ticketID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="transactionDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="transactionNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -59,6 +62,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "bankCode",
     "bankID",
     "bankName",
+    "billingCycle",
     "callbackURL",
     "createdDate",
     "description",
@@ -69,6 +73,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "formattedTransactionDate",
     "fullPayment",
     "id",
+    "membershipID",
     "minimumPayment",
     "name",
     "parentUsername",
@@ -76,6 +81,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "persistent",
     "referenceNumber",
     "status",
+    "subscribed",
     "ticketID",
     "transactionDate",
     "transactionNumber",
@@ -88,6 +94,7 @@ public class VaRecordView {
     protected String bankCode;
     protected Integer bankID;
     protected String bankName;
+    protected Integer billingCycle;
     protected String callbackURL;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar createdDate;
@@ -100,6 +107,7 @@ public class VaRecordView {
     protected String formattedTransactionDate;
     protected boolean fullPayment;
     protected String id;
+    protected Integer membershipID;
     protected BigDecimal minimumPayment;
     protected String name;
     protected String parentUsername;
@@ -107,6 +115,7 @@ public class VaRecordView {
     protected boolean persistent;
     protected String referenceNumber;
     protected String status;
+    protected boolean subscribed;
     protected String ticketID;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar transactionDate;
@@ -208,6 +217,30 @@ public class VaRecordView {
      */
     public void setBankName(String value) {
         this.bankName = value;
+    }
+
+    /**
+     * Gets the value of the billingCycle property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getBillingCycle() {
+        return billingCycle;
+    }
+
+    /**
+     * Sets the value of the billingCycle property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setBillingCycle(Integer value) {
+        this.billingCycle = value;
     }
 
     /**
@@ -443,6 +476,30 @@ public class VaRecordView {
     }
 
     /**
+     * Gets the value of the membershipID property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getMembershipID() {
+        return membershipID;
+    }
+
+    /**
+     * Sets the value of the membershipID property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setMembershipID(Integer value) {
+        this.membershipID = value;
+    }
+
+    /**
      * Gets the value of the minimumPayment property.
      * 
      * @return
@@ -600,6 +657,22 @@ public class VaRecordView {
      */
     public void setStatus(String value) {
         this.status = value;
+    }
+
+    /**
+     * Gets the value of the subscribed property.
+     * 
+     */
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    /**
+     * Sets the value of the subscribed property.
+     * 
+     */
+    public void setSubscribed(boolean value) {
+        this.subscribed = value;
     }
 
     /**

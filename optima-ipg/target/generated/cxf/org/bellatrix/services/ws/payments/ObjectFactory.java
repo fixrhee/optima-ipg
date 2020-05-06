@@ -60,43 +60,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PaymentFields }
+     * Create an instance of {@link Header }
      * 
      */
-    public PaymentFields createPaymentFields() {
-        return new PaymentFields();
-    }
-
-    /**
-     * Create an instance of {@link ConfirmAgentCashoutResponse }
-     * 
-     */
-    public ConfirmAgentCashoutResponse createConfirmAgentCashoutResponse() {
-        return new ConfirmAgentCashoutResponse();
-    }
-
-    /**
-     * Create an instance of {@link InquiryRequest }
-     * 
-     */
-    public InquiryRequest createInquiryRequest() {
-        return new InquiryRequest();
-    }
-
-    /**
-     * Create an instance of {@link PaymentRequest }
-     * 
-     */
-    public PaymentRequest createPaymentRequest() {
-        return new PaymentRequest();
-    }
-
-    /**
-     * Create an instance of {@link TransferHistory }
-     * 
-     */
-    public TransferHistory createTransferHistory() {
-        return new TransferHistory();
+    public Header createHeader() {
+        return new Header();
     }
 
     /**
@@ -108,59 +76,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TransferTypeFields }
-     * 
-     */
-    public TransferTypeFields createTransferTypeFields() {
-        return new TransferTypeFields();
-    }
-
-    /**
-     * Create an instance of {@link ConfirmPaymentRequest }
-     * 
-     */
-    public ConfirmPaymentRequest createConfirmPaymentRequest() {
-        return new ConfirmPaymentRequest();
-    }
-
-    /**
      * Create an instance of {@link ConfirmPaymentTicketRequest }
      * 
      */
     public ConfirmPaymentTicketRequest createConfirmPaymentTicketRequest() {
         return new ConfirmPaymentTicketRequest();
-    }
-
-    /**
-     * Create an instance of {@link RequestPaymentConfirmationResponse }
-     * 
-     */
-    public RequestPaymentConfirmationResponse createRequestPaymentConfirmationResponse() {
-        return new RequestPaymentConfirmationResponse();
-    }
-
-    /**
-     * Create an instance of {@link ConfirmAgentCashoutRequest }
-     * 
-     */
-    public ConfirmAgentCashoutRequest createConfirmAgentCashoutRequest() {
-        return new ConfirmAgentCashoutRequest();
-    }
-
-    /**
-     * Create an instance of {@link MemberView }
-     * 
-     */
-    public MemberView createMemberView() {
-        return new MemberView();
-    }
-
-    /**
-     * Create an instance of {@link PaymentResponse }
-     * 
-     */
-    public PaymentResponse createPaymentResponse() {
-        return new PaymentResponse();
     }
 
     /**
@@ -172,27 +92,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Header }
+     * Create an instance of {@link TransferHistory }
      * 
      */
-    public Header createHeader() {
-        return new Header();
+    public TransferHistory createTransferHistory() {
+        return new TransferHistory();
     }
 
     /**
-     * Create an instance of {@link GeneratePaymentTicketResponse }
+     * Create an instance of {@link ConfirmPaymentRequest }
      * 
      */
-    public GeneratePaymentTicketResponse createGeneratePaymentTicketResponse() {
-        return new GeneratePaymentTicketResponse();
+    public ConfirmPaymentRequest createConfirmPaymentRequest() {
+        return new ConfirmPaymentRequest();
     }
 
     /**
-     * Create an instance of {@link ValidatePaymentTicketResponse }
+     * Create an instance of {@link TransactionStatusRequest }
      * 
      */
-    public ValidatePaymentTicketResponse createValidatePaymentTicketResponse() {
-        return new ValidatePaymentTicketResponse();
+    public TransactionStatusRequest createTransactionStatusRequest() {
+        return new TransactionStatusRequest();
+    }
+
+    /**
+     * Create an instance of {@link PaymentFields }
+     * 
+     */
+    public PaymentFields createPaymentFields() {
+        return new PaymentFields();
     }
 
     /**
@@ -204,6 +132,62 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GeneratePaymentTicketResponse }
+     * 
+     */
+    public GeneratePaymentTicketResponse createGeneratePaymentTicketResponse() {
+        return new GeneratePaymentTicketResponse();
+    }
+
+    /**
+     * Create an instance of {@link InquiryResponse }
+     * 
+     */
+    public InquiryResponse createInquiryResponse() {
+        return new InquiryResponse();
+    }
+
+    /**
+     * Create an instance of {@link ConfirmAgentCashoutResponse }
+     * 
+     */
+    public ConfirmAgentCashoutResponse createConfirmAgentCashoutResponse() {
+        return new ConfirmAgentCashoutResponse();
+    }
+
+    /**
+     * Create an instance of {@link ReversalResponse }
+     * 
+     */
+    public ReversalResponse createReversalResponse() {
+        return new ReversalResponse();
+    }
+
+    /**
+     * Create an instance of {@link AgentCashoutRequest }
+     * 
+     */
+    public AgentCashoutRequest createAgentCashoutRequest() {
+        return new AgentCashoutRequest();
+    }
+
+    /**
+     * Create an instance of {@link PaymentResponse }
+     * 
+     */
+    public PaymentResponse createPaymentResponse() {
+        return new PaymentResponse();
+    }
+
+    /**
+     * Create an instance of {@link ConfirmAgentCashoutRequest }
+     * 
+     */
+    public ConfirmAgentCashoutRequest createConfirmAgentCashoutRequest() {
+        return new ConfirmAgentCashoutRequest();
+    }
+
+    /**
      * Create an instance of {@link ReversalRequest }
      * 
      */
@@ -212,11 +196,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TransactionStatusRequest }
+     * Create an instance of {@link InquiryRequest }
      * 
      */
-    public TransactionStatusRequest createTransactionStatusRequest() {
-        return new TransactionStatusRequest();
+    public InquiryRequest createInquiryRequest() {
+        return new InquiryRequest();
+    }
+
+    /**
+     * Create an instance of {@link MemberView }
+     * 
+     */
+    public MemberView createMemberView() {
+        return new MemberView();
     }
 
     /**
@@ -236,27 +228,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AgentCashoutRequest }
+     * Create an instance of {@link ValidatePaymentTicketResponse }
      * 
      */
-    public AgentCashoutRequest createAgentCashoutRequest() {
-        return new AgentCashoutRequest();
+    public ValidatePaymentTicketResponse createValidatePaymentTicketResponse() {
+        return new ValidatePaymentTicketResponse();
     }
 
     /**
-     * Create an instance of {@link ReversalResponse }
+     * Create an instance of {@link PaymentRequest }
      * 
      */
-    public ReversalResponse createReversalResponse() {
-        return new ReversalResponse();
+    public PaymentRequest createPaymentRequest() {
+        return new PaymentRequest();
     }
 
     /**
-     * Create an instance of {@link InquiryResponse }
+     * Create an instance of {@link RequestPaymentConfirmationResponse }
      * 
      */
-    public InquiryResponse createInquiryResponse() {
-        return new InquiryResponse();
+    public RequestPaymentConfirmationResponse createRequestPaymentConfirmationResponse() {
+        return new RequestPaymentConfirmationResponse();
+    }
+
+    /**
+     * Create an instance of {@link TransferTypeFields }
+     * 
+     */
+    public TransferTypeFields createTransferTypeFields() {
+        return new TransferTypeFields();
     }
 
     /**
