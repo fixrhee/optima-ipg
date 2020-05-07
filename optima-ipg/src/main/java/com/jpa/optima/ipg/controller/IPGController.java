@@ -61,6 +61,7 @@ public class IPGController {
 	@RequestMapping(value = "/paymentRequest", method = RequestMethod.POST)
 	public String payment(@RequestParam(value = "merchantID", required = true) String mid,
 			@RequestParam(value = "invoiceID", required = true) String invoiceID,
+			@RequestParam(value = "paymentChannel", required = false) String channel,
 			@RequestParam(value = "amount", required = true) String amount,
 			@RequestParam(value = "name", required = true) String name,
 			@RequestParam(value = "email", required = true) String email,
@@ -240,7 +241,14 @@ public class IPGController {
 			model.addAttribute("basket", response.getBasket());
 			model.addAttribute("receiveURL", contextLoader.getReceiveURL());
 			model.addAttribute("ticketID", ticketID);
-			return "paymentPage";
+
+			if (t.getPaymentChannel() == 1) {
+				return "creditCardRedirect";
+			} else if (t.getPaymentChannel() == 2) {
+				return "bankTransferRedirect";
+			} else {
+				return "paymentPage";
+			}
 		} catch (NullPointerException ex) {
 			logger.error("[Ticket Not Found/Expired]");
 			model.addAttribute("httpResponseCode", "404");
