@@ -148,7 +148,7 @@ public class PaymentPageProcessor {
 	}
 
 	public VaRegisterResponse registerVABilling(String username, String billName, String msisdn, String email,
-			String description, BigDecimal amount, Integer bankID)
+			String description, BigDecimal amount, Integer bankID, String callback)
 			throws MalformedURLException, DatatypeConfigurationException, ParseException {
 		URL url = new URL(contextLoader.getHostWSUrl() + "virtualaccounts?wsdl");
 		QName qName = new QName(contextLoader.getHostWSPort(), "VirtualAccountService");
@@ -173,6 +173,7 @@ public class PaymentPageProcessor {
 		vaRegisterRequest.setFullPayment(true);
 		vaRegisterRequest.setAmount(amount);
 		vaRegisterRequest.setDescription(description);
+		vaRegisterRequest.setCallbackURL(callback);
 		VaRegisterResponse vaRegisterResponse = client.registerVA(vaHeaderAuth, vaRegisterRequest);
 		return vaRegisterResponse;
 	}

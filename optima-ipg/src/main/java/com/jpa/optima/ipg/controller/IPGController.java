@@ -61,7 +61,7 @@ public class IPGController {
 	@RequestMapping(value = "/paymentRequest", method = RequestMethod.POST)
 	public String payment(@RequestParam(value = "merchantID", required = true) String mid,
 			@RequestParam(value = "invoiceID", required = true) String invoiceID,
-			@RequestParam(value = "paymentChannel", required = false) String channel,
+			@RequestParam(value = "paymentChannel", required = false) Integer channel,
 			@RequestParam(value = "amount", required = true) String amount,
 			@RequestParam(value = "name", required = true) String name,
 			@RequestParam(value = "email", required = true) String email,
@@ -130,6 +130,8 @@ public class IPGController {
 			return "page_exception";
 		}
 
+		Integer paymentChannel = channel == null ? 0 : channel;
+
 		try {
 			LoadMembersResponse lmr = paymentPageProcessor.loadMember(mid);
 			if (lmr.getMembers().size() == 0) {
@@ -161,7 +163,7 @@ public class IPGController {
 							+ String.valueOf(getRandomNumberInRange(11111111, 99999999))
 					: msisdn;
 
-			String descVal = description == null ? "Payment to " + mid : description;
+			String descVal = description == null ? "Payment to " + lmr.getMembers().get(0).getName() : description;
 
 			String currencyVal = currency == null ? "360" : currency;
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -178,6 +180,7 @@ public class IPGController {
 			t.setMerchantID(mid);
 			t.setIpAddress(req.getRemoteAddr());
 			t.setMsisdn(refNo);
+			t.setPaymentChannel(paymentChannel);
 			t.setCallback(callback);
 			t.setSessionID(sessionID);
 			t.setCurrency(currencyVal);
@@ -301,7 +304,7 @@ public class IPGController {
 
 			VaRegisterResponse vaRegisterResponse = paymentPageProcessor.registerVABilling(t.getMerchantID(),
 					transfer.getName(), transfer.getMsisdn(), transfer.getEmail(), transfer.getDescription(),
-					transfer.getAmount(), 1);
+					transfer.getAmount(), 1, t.getCallback());
 
 			tMap.delete(transfer.getTicketID());
 			if (vaRegisterResponse.getStatus().getMessage().equalsIgnoreCase("PROCESSED")) {

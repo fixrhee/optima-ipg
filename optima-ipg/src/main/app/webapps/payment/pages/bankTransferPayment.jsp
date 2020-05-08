@@ -20,7 +20,7 @@
 						<div class="box clearfix">
 							<div class="invoice">
 								<div class="content">
-									<h3 style="margin-top: 0">Organizer</h3>
+									<h3 style="margin-top: 0">Merchant</h3>
 									<h2>${eventName}</h2>
 									<br />	
 									<h3>Description</h3>
