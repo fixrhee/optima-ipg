@@ -21,6 +21,7 @@
 		<input type="hidden" name="invoiceID" value="${invoiceID}">
 		<input type="hidden" name="amount" value="${amount}">
 		<input type="hidden" name="sessionID" value="${sessionID}">
+		<input type="hidden" name="eventID" value="${eventID}">
 		<input type="hidden" name="currency" value="${currency}">
 		<input type="hidden" name="paymentChannel" value="${paymentChannel}">
 		<input type="hidden" name="ticketID" value="${ticketID}">

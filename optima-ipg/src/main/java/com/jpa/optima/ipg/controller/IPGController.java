@@ -9,23 +9,19 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bellatrix.services.ws.access.CredentialResponse;
 import org.bellatrix.services.ws.members.LoadMembersResponse;
 import org.bellatrix.services.ws.payments.PaymentResponse;
 import org.bellatrix.services.ws.virtualaccount.LoadVAByIDResponse;
 import org.bellatrix.services.ws.virtualaccount.VaRegisterResponse;
-import org.mule.api.client.MuleClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,6 +66,7 @@ public class IPGController {
 			@RequestParam(value = "callback", required = true) String callback,
 			@RequestParam(value = "localDateTime", required = true) String localDateTime,
 			@RequestParam(value = "sessionID", required = true) String sessionID,
+			@RequestParam(value = "eventID", required = false) String eventID,
 			@RequestParam(value = "currency", required = false) String currency,
 			@RequestParam(value = "words", required = true) String words, Model model, HttpServletRequest req)
 			throws MalformedURLException {
@@ -163,12 +160,13 @@ public class IPGController {
 							+ String.valueOf(getRandomNumberInRange(11111111, 99999999))
 					: msisdn;
 
+			String eventId = eventID == null ? "NA" : eventID;
 			String descVal = description == null ? "Payment to " + lmr.getMembers().get(0).getName() : description;
-
 			String currencyVal = currency == null ? "360" : currency;
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
 
 			logger.info("[Request IP Address : " + req.getRemoteAddr() + "]");
+			logger.info("[EventID : " + eventId + " SessionID : " + sessionID + "]");
 			IMap<String, Ticket> tMap = instance.getMap("PaymentRequestMap");
 			String ticket = java.util.UUID.randomUUID().toString();
 			Ticket t = new Ticket();
@@ -183,6 +181,7 @@ public class IPGController {
 			t.setPaymentChannel(paymentChannel);
 			t.setCallback(callback);
 			t.setSessionID(sessionID);
+			t.setEventID(eventId);
 			t.setCurrency(currencyVal);
 			t.setWords(words);
 			t.setLocalDateTime(formatter.parse(localDateTime));
@@ -269,28 +268,6 @@ public class IPGController {
 		}
 	}
 
-	@RequestMapping(value = "/creditCard", method = RequestMethod.POST)
-	public String submitCreditCardrForm(@Valid @ModelAttribute("transfer") Transfer transfer, BindingResult result,
-			ModelMap model) {
-		try {
-			if (result.hasErrors()) {
-				return "page_500";
-			}
-
-			// IMap<String, Ticket> tMap = instance.getMap("PaymentRequestMap");
-			// Ticket t = tMap.get(transfer.getTicketID());
-			return "creditCard";
-
-		} catch (NullPointerException ex) {
-			logger.error("[Ticket Not Found/Expired]");
-			model.addAttribute("httpResponseCode", "404");
-			model.addAttribute("status", "TicketID Not Found");
-			model.addAttribute("description", "Expired/Invalid TicketID");
-			return "page_exception";
-		}
-
-	}
-
 	@RequestMapping(value = "/bankTransfer", method = RequestMethod.POST)
 	public String submitTransferForm(@Valid @ModelAttribute("transfer") Transfer transfer, BindingResult result,
 			ModelMap model) {
@@ -304,11 +281,11 @@ public class IPGController {
 
 			VaRegisterResponse vaRegisterResponse = paymentPageProcessor.registerVABilling(t.getMerchantID(),
 					transfer.getName(), transfer.getMsisdn(), transfer.getEmail(), transfer.getDescription(),
-					transfer.getAmount(), 1, t.getCallback());
+					transfer.getAmount(), 1, t.getEventID(), t.getCallback());
 
-			tMap.delete(transfer.getTicketID());
 			if (vaRegisterResponse.getStatus().getMessage().equalsIgnoreCase("PROCESSED")) {
-				model.addAttribute("ticketID", vaRegisterResponse.getTicketID());
+				model.addAttribute("ticketID", transfer.getTicketID());
+				model.addAttribute("ticketVA", vaRegisterResponse.getTicketID());
 				return "redirect:/bankTransferPayment";
 			} else if (vaRegisterResponse.getStatus().getMessage().equalsIgnoreCase("DUPLICATE_TRANSACTION")) {
 				logger.error("[Ticket Not Found/Expired]");
@@ -342,12 +319,19 @@ public class IPGController {
 
 	@RequestMapping(value = "/bankTransferPayment", method = RequestMethod.GET)
 	public String transferFormRedirection(ModelMap model,
-			@RequestParam(value = "ticketID", required = false) String ticket) {
+			@RequestParam(value = "ticketID", required = true) String ticketID,
+			@RequestParam(value = "ticketVA", required = true) String ticketVA) {
 		try {
-			LoadVAByIDResponse loadVAByIDResponse = paymentPageProcessor.loadVAByID(ticket);
+			IMap<String, Ticket> tMap = instance.getMap("PaymentRequestMap");
+			Ticket t = tMap.get(ticketID);
+			t.setPaymentChannel(2);
+			LoadVAByIDResponse loadVAByIDResponse = paymentPageProcessor.loadVAByID(ticketVA);
 			if (loadVAByIDResponse.getVaRecord().size() == 0) {
 				return "page_404";
 			}
+
+			IMap<String, Ticket> vaMap = instance.getMap("PaymentVAMap");
+			vaMap.put(loadVAByIDResponse.getVaRecord().get(0).getId(), t);
 			LoadMembersResponse lmr = paymentPageProcessor
 					.loadMember(loadVAByIDResponse.getVaRecord().get(0).getParentUsername());
 			model.addAttribute("paymentCode", loadVAByIDResponse.getVaRecord().get(0).getId());
@@ -356,10 +340,40 @@ public class IPGController {
 			model.addAttribute("eventName", lmr.getMembers().get(0).getName());
 			model.addAttribute("username", lmr.getMembers().get(0).getUsername());
 			model.addAttribute("description", loadVAByIDResponse.getVaRecord().get(0).getDescription());
+			tMap.delete(ticketID);
 			return "bankTransferPayment";
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+			logger.error("[Ticket Not Found/Expired]");
+			model.addAttribute("httpResponseCode", "404");
+			model.addAttribute("status", "TicketID Not Found");
+			model.addAttribute("description", "Expired/Invalid TicketID");
+			return "page_exception";
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			logger.error("[" + ex.getCause() + "]");
+			model.addAttribute("httpResponseCode", "500");
+			model.addAttribute("status", "Oops !");
+			model.addAttribute("description",
+					"We are experiencing some trouble here, but don't worry our team are OTW to solve this");
+			return "page_exception";
+		}
+	}
+
+	@RequestMapping(value = "/paymentVANotification", method = RequestMethod.POST)
+	public String paymentVANotification(@RequestParam(value = "paymentCode", required = true) String paymentCode,
+			@RequestParam(value = "amount", required = true) String amount,
+			@RequestParam(value = "transactionNumber", required = true) String transactionNumber,
+			@RequestParam(value = "notificationDate", required = true) String notificationDate, ModelMap model) {
+		try {
+			IMap<String, Ticket> vaMap = instance.getMap("PaymentVAMap");
+			Ticket t = vaMap.get(paymentCode);
+			String res = paymentPageProcessor.sendVANotification(t);
+			logger.info("[VA Notification Response : " + res + "]");
+			vaMap.delete(paymentCode);
+			return "OK";
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			model.addAttribute("httpResponseCode", "500");
 			model.addAttribute("status", "Oops !");
 			model.addAttribute("description",
@@ -451,6 +465,7 @@ public class IPGController {
 				PaymentResponse pr = paymentPageProcessor.doPayment(sessionID, t.getMerchantID(), t.getInvoiceID(),
 						t.getDescription(), t.getAmount());
 				if (pr.getStatus().getMessage().equalsIgnoreCase("PROCESSED")) {
+					t.setPaymentChannel(1);
 					t.setStatus(pr.getStatus().getMessage());
 					model.addAttribute("merchantID", t.getMerchantID());
 					model.addAttribute("invoiceID", t.getInvoiceID());
@@ -500,6 +515,7 @@ public class IPGController {
 				model.addAttribute("invoiceID", t.getInvoiceID());
 				model.addAttribute("amount", t.getAmount());
 				model.addAttribute("sessionID", t.getSessionID());
+				model.addAttribute("eventID", t.getEventID());
 				model.addAttribute("currency", t.getCurrency());
 				model.addAttribute("paymentChannel", t.getPaymentChannel());
 				model.addAttribute("ticketID", sessionID);
@@ -531,22 +547,6 @@ public class IPGController {
 		}
 	}
 
-	// @RequestMapping(value = "/testRedirect", method = RequestMethod.GET)
-	// public String testRedirect(@RequestParam(value = "test", required = false)
-	// String test, ModelMap model) {
-	// model.addAttribute("ticketID", "11283797981723");
-	// model.addAttribute("merchantID", "1112007");
-	// model.addAttribute("invoiceID", "112983791723898791");
-	// model.addAttribute("amount", "10000");
-	// model.addAttribute("sessionID", "1192789u09uo129");
-	// model.addAttribute("currency", "360");
-	// model.addAttribute("paymentChannel", "15");
-	// model.addAttribute("words", "187912kuhkuh23iyi");
-	// model.addAttribute("status", "PROCESSED");
-	//
-	// return "merchantRedirect";
-	// }
-
 	@RequestMapping(value = "/merchantRedirection", method = RequestMethod.POST)
 	public ResponseEntity<Object> redirectToExternalUrl(
 			@RequestParam(value = "ticketID", required = true) String ticketID,
@@ -554,6 +554,7 @@ public class IPGController {
 			@RequestParam(value = "invoiceID", required = true) String invoiceID,
 			@RequestParam(value = "amount", required = true) String amount,
 			@RequestParam(value = "sessionID", required = false) String sessionID,
+			@RequestParam(value = "eventID", required = false) String eventID,
 			@RequestParam(value = "currency", required = false) String currency,
 			@RequestParam(value = "paymentChannel", required = false) String paymentChannel,
 			@RequestParam(value = "words", required = true) String words,

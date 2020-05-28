@@ -57,6 +57,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import com.jpa.optima.ipg.model.CreditCardParam;
+import com.jpa.optima.ipg.model.Ticket;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -148,7 +150,7 @@ public class PaymentPageProcessor {
 	}
 
 	public VaRegisterResponse registerVABilling(String username, String billName, String msisdn, String email,
-			String description, BigDecimal amount, Integer bankID, String callback)
+			String description, BigDecimal amount, Integer bankID, String eventID, String callback)
 			throws MalformedURLException, DatatypeConfigurationException, ParseException {
 		URL url = new URL(contextLoader.getHostWSUrl() + "virtualaccounts?wsdl");
 		QName qName = new QName(contextLoader.getHostWSPort(), "VirtualAccountService");
@@ -167,13 +169,18 @@ public class PaymentPageProcessor {
 		vaRegisterRequest.setPersistent(false);
 		vaRegisterRequest.setReferenceNumber(msisdn);
 		vaRegisterRequest.setUsername(username);
-		// vaRegisterRequest.setEventID(billing.getEvent().get(0).getTicketID());
+
+		if (eventID.equalsIgnoreCase("NA")) {
+			vaRegisterRequest.setCallbackURL(contextLoader.getPaymentVANotifURL());
+		} else {
+			vaRegisterRequest.setEventID(eventID);
+		}
+		
 		vaRegisterRequest.setMinimumPayment(BigDecimal.ZERO);
 		vaRegisterRequest.setEmail(email);
 		vaRegisterRequest.setFullPayment(true);
 		vaRegisterRequest.setAmount(amount);
 		vaRegisterRequest.setDescription(description);
-		vaRegisterRequest.setCallbackURL(callback);
 		VaRegisterResponse vaRegisterResponse = client.registerVA(vaHeaderAuth, vaRegisterRequest);
 		return vaRegisterResponse;
 	}
@@ -349,6 +356,34 @@ public class PaymentPageProcessor {
 		urlParameters.add(new BasicNameValuePair("TRANSIDMERCHANT", transID));
 		urlParameters.add(new BasicNameValuePair("SESSIONID", sessionID));
 		urlParameters.add(new BasicNameValuePair("WORDS", words));
+
+		post.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+				CloseableHttpResponse response = httpClient.execute(post)) {
+			result = EntityUtils.toString(response.getEntity());
+		}
+
+		return result;
+	}
+
+	public String sendVANotification(Ticket t) throws IOException {
+		String result = "";
+		HttpPost post = new HttpPost(t.getCallback());
+
+		List<NameValuePair> urlParameters = new ArrayList<>();
+		urlParameters.add(new BasicNameValuePair("merchantID", t.getMerchantID()));
+		urlParameters.add(new BasicNameValuePair("invoiceID", t.getInvoiceID()));
+		urlParameters.add(new BasicNameValuePair("amount", t.getAmount().toPlainString()));
+		urlParameters.add(new BasicNameValuePair("sessionID", t.getSessionID()));
+		urlParameters.add(new BasicNameValuePair("currency", t.getCurrency()));
+		urlParameters.add(new BasicNameValuePair("name", t.getName()));
+		urlParameters.add(new BasicNameValuePair("email", t.getEmail()));
+		urlParameters.add(new BasicNameValuePair("msisdn", t.getMsisdn()));
+		urlParameters.add(new BasicNameValuePair("description", t.getDescription()));
+		urlParameters.add(new BasicNameValuePair("paymentChannel", String.valueOf(t.getPaymentChannel())));
+		urlParameters.add(new BasicNameValuePair("words", t.getWords()));
+		urlParameters.add(new BasicNameValuePair("status", "PROCESSED"));
 
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 

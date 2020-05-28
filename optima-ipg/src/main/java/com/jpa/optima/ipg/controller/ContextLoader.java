@@ -34,6 +34,8 @@ public class ContextLoader {
 	private String DokuUsername;
 	@Value("${payment.page.url}")
 	private String PaymentPageURL;
+	@Value("${payment.va.notif.url}")
+	private String PaymentVANotifURL;
 
 	public String getPaymentPageURL() {
 		return PaymentPageURL;
@@ -130,6 +132,18 @@ public class ContextLoader {
 
 	public void setReceiveURL(String receiveURL) {
 		ReceiveURL = receiveURL;
+	}
+
+	public String getPaymentVANotifURL() {
+		return PaymentVANotifURL;
+	}
+
+	public void setPaymentVANotifURL(String paymentVANotifURL) {
+		PaymentVANotifURL = paymentVANotifURL;
+	}
+
+	public void setPaymentPageURL(String paymentPageURL) {
+		PaymentPageURL = paymentPageURL;
 	}
 
 }

@@ -22,6 +22,7 @@ public class Ticket implements Serializable {
 	private String sessionID;
 	private String currency;
 	private Integer paymentChannel;
+	private String eventID;
 	private String status;
 	private String words;
 	private Date localDateTime;
@@ -144,6 +145,14 @@ public class Ticket implements Serializable {
 
 	public void setLocalDateTime(Date localDateTime) {
 		this.localDateTime = localDateTime;
+	}
+
+	public String getEventID() {
+		return eventID;
+	}
+
+	public void setEventID(String eventID) {
+		this.eventID = eventID;
 	}
 
 }

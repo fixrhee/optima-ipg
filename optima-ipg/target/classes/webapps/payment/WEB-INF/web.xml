@@ -5,9 +5,14 @@
 	version="3.0">
 	<display-name>OPTIMA Payment Page</display-name>
 	<welcome-file-list>
-		<welcome-file>/index</welcome-file>
+		<welcome-file>/paymentRequest</welcome-file>
 	</welcome-file-list>
-
+	
+	<context-param>
+		<param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	
 	<servlet>
 		<servlet-name>app</servlet-name>
 		<servlet-class>
@@ -23,6 +28,7 @@
 		<url-pattern>/bankTransferPayment</url-pattern>
 		<url-pattern>/paymentRequest</url-pattern>
 		<url-pattern>/paymentNotification</url-pattern>
+		<url-pattern>/paymentVANotification</url-pattern>
 		<url-pattern>/paymentRedirection</url-pattern>
 		<url-pattern>/creditCard</url-pattern>
 		<url-pattern>/merchantRedirection</url-pattern>

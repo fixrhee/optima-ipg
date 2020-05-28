@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/je
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
 	<jetty:connector name="Jetty" doc:name="Jetty">
-		<jetty:webapps directory="${app.home}/webapps" port="80" />
+		<jetty:webapps directory="${app.home}/webapps" port="18443" />
 	</jetty:connector>
 	
 </mule>
